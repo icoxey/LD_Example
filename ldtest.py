@@ -1,4 +1,7 @@
 # import your libraries
+import sys
+import string
+import random
 from requests import get
 import ldclient
 from ldclient.config import Config
@@ -7,19 +10,39 @@ from ldclient.config import Config
 site = "https://www.iancoxey.com"
 siteoff = site + "/ldoff"
 
+# define character sets for the user key
+key_set = string.ascii_lowercase + string.ascii_uppercase + string.digits
+
 # reach out and get external IP
 ip_addr = get('https://api.ipify.org').text
+
+# function to create a random key for this session
+def make_key():
+      return ''.join(
+        random.choice(key_set) 
+        for _ in range(8)
+    )
 
 # main using my sdk key
 if __name__ == "__main__":
   sdk_key = "sdk-e77356dd-34ee-4c86-8219-018a22e6f13d"
   ldclient.set_config(Config(sdk_key))
+
+# get inputs from user
+  firstname = input("Please enter your first name: ")
+  lastname = input("Please enter your last name: ")
+  emailaddr = input("Please enter your email address: ")
+
+# create the user key
+  make_key()
+  key = make_key()
+
 # user data to pass through, note IP info for targeting
   user = {
-    "key": "abc123",
-    "firstName": "Ian",
-    "lastName": "Coxey",
-    "email": "ian.coxey@gmail.com",
+    "key": key,
+    "firstName": firstname,
+    "lastName": lastname,
+    "email": emailaddr,
     "ip": ip_addr
     }
 
@@ -28,7 +51,7 @@ if __name__ == "__main__":
 
 # if/else statement displays based on user targeting in dashboard
   if show_feature:
-    print("Your IP is allowed. You should visit " + site)
+    print("Thank you, " + firstname + " " + lastname + ", your IP is allowed. You should visit " + site)
   else:
     print("Sorry, your IP is not allowed, as you can see here: " + siteoff)
 
